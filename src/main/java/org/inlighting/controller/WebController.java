@@ -26,6 +26,12 @@ public class WebController {
         this.userService = userService;
     }
 
+    /**
+     *  登入
+     * @param username
+     * @param password
+     * @return
+     */
     @PostMapping("/login")
     public ResponseBean login(@RequestParam("username") String username,
                               @RequestParam("password") String password) {
@@ -37,6 +43,10 @@ public class WebController {
         }
     }
 
+    /**
+     * 所有人都可以访问，但是用户与游客看到的内容不同
+     * @return
+     */
     @GetMapping("/article")
     public ResponseBean article() {
         Subject subject = SecurityUtils.getSubject();
@@ -47,20 +57,33 @@ public class WebController {
         }
     }
 
+    /**
+     * 登入的用户才可以进行访问
+     * @return
+     */
     @GetMapping("/require_auth")
     @RequiresAuthentication
     public ResponseBean requireAuth() {
         return new ResponseBean(200, "You are authenticated", null);
     }
 
+    /**
+     * admin的角色用户才可以登入
+     * @return
+     */
     @GetMapping("/require_role")
     @RequiresRoles("admin")
     public ResponseBean requireRole() {
         return new ResponseBean(200, "You are visiting require_role", null);
     }
 
+    /**
+     * 拥有view和edit权限的用户才可以访问
+     * @return
+     */
     @GetMapping("/require_permission")
-    @RequiresPermissions(logical = Logical.AND, value = {"view", "edit"})
+//    @RequiresPermissions(logical = Logical.AND, value = {"view", "edit"})
+    @RequiresPermissions(logical = Logical.OR,value = {"user:query:1","window:edit"})
     public ResponseBean requirePermission() {
         return new ResponseBean(200, "You are visiting permission require edit,view", null);
     }

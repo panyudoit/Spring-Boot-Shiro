@@ -2,13 +2,16 @@ package org.inlighting.shiro;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.AuthenticationInfo;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.inlighting.database.UserService;
 import org.inlighting.database.UserBean;
+import org.inlighting.database.UserService;
 import org.inlighting.util.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +21,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class MyRealm extends AuthorizingRealm {
+public class MySecondRealm extends AuthorizingRealm {
 
-    private static final Logger LOGGER = LogManager.getLogger(MyRealm.class);
+    private static final Logger LOGGER = LogManager.getLogger(MySecondRealm.class);
 
     private UserService userService;
 
@@ -30,7 +33,7 @@ public class MyRealm extends AuthorizingRealm {
     }
 
     /**
-     * 大坑！，必须重写此方法，不然Shiro会报错,支持 JWTToken
+     * 大坑！，必须重写此方法，不然Shiro会报错
      */
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -42,7 +45,7 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        LOGGER.info("***加载了 ***MyRealm ***doGetAuthorizationInfo");
+        LOGGER.info("***加载了 ***MySecondRealm ***doGetAuthorizationInfo");
         String username = JWTUtil.getUsername(principals.toString());
         UserBean user = userService.getUser(username);
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
@@ -57,8 +60,7 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken auth) throws AuthenticationException {
-        LOGGER.info("***加载了 ***MyRealm ***doGetAuthenticationInfo");
-        String ke = (String)auth.getPrincipal();
+        LOGGER.info("***加载了 ***MySecondRealm ***doGetAuthenticationInfo");
         String token = (String) auth.getCredentials();
         // 解密获得username，用于和数据库进行对比
         String username = JWTUtil.getUsername(token);

@@ -15,7 +15,9 @@ public class DataSource {
         Map<String, String> data2 = new HashMap<>();
         data2.put("password", "danny123");
         data2.put("role", "admin");
-        data2.put("permission", "view,edit");
+        //通配符
+        data2.put("permission","user:*");
+        //data2.put("permission", "view,edit");
 
         data.put("smith", data1);
         data.put("danny", data2);

@@ -11,11 +11,13 @@ public class JWTToken implements AuthenticationToken {
         this.token = token;
     }
 
+    ////身份
     @Override
     public Object getPrincipal() {
         return token;
     }
 
+    //凭据
     @Override
     public Object getCredentials() {
         return token;
